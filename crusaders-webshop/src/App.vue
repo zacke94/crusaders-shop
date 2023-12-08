@@ -7,28 +7,7 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      shoppingItems: [{
-        id: 1,
-        name: "Cola",
-        price: 15,
-        totalAvailable: 8
-      },
-      /*{
-        id: 2,
-        name: "Nocco",
-        price: 25
-      }*/]
-    };
-  },
-  provide() {
-    return {
-      shoppingItems: this.shoppingItems
-    }
-  }
-};
+export default {};
 </script>
 
 <style scoped>
