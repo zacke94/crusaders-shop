@@ -1,14 +1,15 @@
 <template>
   <main>
-    <broker></broker>
-    <!--    <RouterLink to="/shop">Start Shop</RouterLink>-->
+    <device></device>
   </main>
 </template>
 <script>
-import Broker from '../components/Broker.vue';
+import Device from '@/components/Device.vue';
+
 export default {
+  name: 'home-view',
   components: {
-    Broker
+    Device
   }
 };
 </script>
