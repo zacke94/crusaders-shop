@@ -18,19 +18,24 @@ class ElectroMagnet:
             self.lock()
             logger_instance.info("Successfully locked device at startup")
         except Exception as e:
-            logger_instance.critical("Could not lock device at startup")
+            logger_instance.critical(f"Could not lock device at startup: ${e}")
 
     def lock(self):
         """
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(_gpio_pin, GPIO.OUT)
-        GPIO.output(_gpio_pin, GPIO.LOW)"""
+        GPIO.setup(self._gpio_pin, GPIO.OUT)
+        GPIO.output(self._gpio_pin, GPIO.LOW)"""
 
     def unlock(self):
         """
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(_gpio_pin, GPIO.OUT)
-        GPIO.output(_gpio_pin, GPIO.HIGH)"""
+        GPIO.setup(self._gpio_pin, GPIO.OUT)
+        GPIO.output(self._gpio_pin, GPIO.HIGH)"""
+
+    def cleanup(self):
+        """
+        GPIO.cleanup()
+        """
 
 
 electro_magnet_instance = ElectroMagnet()

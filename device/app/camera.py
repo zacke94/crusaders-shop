@@ -14,7 +14,7 @@ def _record(id):
         os.makedirs("recordings", exist_ok=True)
         # Open a connection to the external camera (0 is usually the default camera, use 1 for external camera)
         logger_instance.info("Camera starting")
-        cap = cv2.VideoCapture(1)
+        cap = cv2.VideoCapture(0)
 
         # Check if the camera opened successfully
         if not cap.isOpened():

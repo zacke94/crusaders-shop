@@ -8,7 +8,8 @@ if __name__ == '__main__':
     try:
         logger_instance.info("App is running.")
         app.run(debug=True)
-    #electro_magnet_instance.lock()
+        electro_magnet_instance.lock()
     finally:
-        print("EXIT")
-    #    GPIO.cleanup()
+        logger_instance.info("Terminating the app")
+        #electro_magnet_instance.unlock()
+        #electro_magnet_instance.cleanup()

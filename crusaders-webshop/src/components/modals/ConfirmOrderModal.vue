@@ -87,9 +87,12 @@ export default {
       this.headerMessage = 'Öppnar kylen....';
 
       try {
-        const response = await axios.post('http://127.0.0.1:5000/unlock-fridge', {
-          isAdmin: false
-        });
+        const response = await axios.post(
+          `http://127.0.0.1:5000/unlock-fridge/${this.order.customerId}`,
+          {
+            isAdmin: false
+          }
+        );
 
         if (response.status === 200) {
           this.fridgeIsOpen();

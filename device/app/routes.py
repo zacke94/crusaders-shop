@@ -117,7 +117,6 @@ def delete_products(id):
 @current_app.route('/add-order', methods=['POST'])
 def add_order():
     try:
-        print(request.json)
         adjusted_column_name = [{
             'id': product['id'], 
             'name': product['name'], 
