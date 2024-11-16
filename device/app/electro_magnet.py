@@ -1,5 +1,4 @@
-"""import RPi.GPIO as GPIO
-"""
+from .pi_utils import *
 from .logger import logger_instance
 
 class ElectroMagnet:
@@ -15,27 +14,31 @@ class ElectroMagnet:
     
     def _initialize(self):
         try:
-            self.lock()
-            logger_instance.info("Successfully locked device at startup")
+            if is_pi_environment():
+                self.import_module()
+                self.lock()
+                logger_instance.info("Successfully locked device at startup")
         except Exception as e:
             logger_instance.critical(f"Could not lock device at startup: ${e}")
 
     def lock(self):
-        """
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self._gpio_pin, GPIO.OUT)
-        GPIO.output(self._gpio_pin, GPIO.LOW)"""
+        if is_pi_environment():
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(self._gpio_pin, GPIO.OUT)
+            GPIO.output(self._gpio_pin, GPIO.LOW)
 
     def unlock(self):
-        """
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self._gpio_pin, GPIO.OUT)
-        GPIO.output(self._gpio_pin, GPIO.HIGH)"""
+        if is_pi_environment():
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(self._gpio_pin, GPIO.OUT)
+            GPIO.output(self._gpio_pin, GPIO.HIGH)
 
     def cleanup(self):
-        """
-        GPIO.cleanup()
-        """
+        if is_pi_environment():
+            GPIO.cleanup()
+    
+    def import_module(self):
+        import RPi.GPIO as GPIO
 
 
 electro_magnet_instance = ElectroMagnet()
