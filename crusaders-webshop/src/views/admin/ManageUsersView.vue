@@ -24,8 +24,8 @@
 </template>
 
 <script>
-import AddUserModal from '@/components/modals/AddUserModal.vue';
-import EditUserModal from '@/components/modals/EditUserModal.vue';
+import AddUserModal from '@/components/modals/admin/AddUserModal.vue';
+import EditUserModal from '@/components/modals/admin/EditUserModal.vue';
 import axios from 'axios';
 import { User } from '@/models/User';
 import Button from 'primevue/button';

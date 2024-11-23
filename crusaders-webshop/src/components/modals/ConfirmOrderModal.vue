@@ -3,7 +3,7 @@
   <Button label="Köp" @click="onClickBuy" :disabled="order.totalPrice === 0"></Button>
 
   <Dialog :visible="showModal" modal :header="headerMessage" :style="{ 'min-width': '400px' }">
-    <div v-if="!openingFridgeState" class="flex justify-content-end gap-2">
+    <div v-if="!openingFridgeState">
       <DataTable
         :value="order.products"
         :pt="{
@@ -18,7 +18,7 @@
         <Column field="totalPrice" header="Summa"></Column>
 
         <template #footer>
-          <p style="font-weight: bold">Totalbelopp: {{ order.totalPrice }} kr</p>
+          <p class="bold-text">Totalbelopp: {{ order.totalPrice }} kr</p>
         </template>
       </DataTable>
 

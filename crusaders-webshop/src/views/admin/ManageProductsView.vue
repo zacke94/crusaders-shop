@@ -36,8 +36,8 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import axios from 'axios';
 import { Product } from '@/models/Product';
 import ConfirmPopup from 'primevue/confirmpopup';
-import EditProductModal from '@/components/modals/EditProductModal.vue';
-import AddProductModal from '@/components/modals/AddProductModal.vue';
+import EditProductModal from '@/components/modals/admin/EditProductModal.vue';
+import AddProductModal from '@/components/modals/admin/AddProductModal.vue';
 import Toast from 'primevue/toast';
 
 export default {
