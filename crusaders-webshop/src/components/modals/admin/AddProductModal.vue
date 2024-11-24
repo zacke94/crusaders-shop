@@ -31,6 +31,8 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import axios from 'axios';
 import Toast from 'primevue/toast';
+import { Form, FormField } from '@primevue/forms';
+import Message from 'primevue/message';
 
 export default {
   name: 'AddProductModal',
@@ -38,7 +40,10 @@ export default {
     Dialog,
     InputText,
     Button,
-    Toast
+    Toast,
+    Form,
+    FormField,
+    Message
   },
   emits: ['updateProducts'],
   data() {
@@ -49,7 +54,7 @@ export default {
   },
   computed: {
     disableSaveButton() {
-      return !this.newProduct.name || !this.newProduct.price;
+      return !this.newProduct.name && !this.newProduct.price;
     }
   },
   methods: {
