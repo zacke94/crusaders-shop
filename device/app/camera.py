@@ -1,17 +1,21 @@
 import threading
 import time
 import cv2
-from datetime import date
+from datetime import datetime
 import os
 from .logger import logger_instance
+from .pi_utils import *
 
 
-def _file_name(self, id):
-    return f"recordings/{date.today().strftime('%b_%d_%Y')}_id_{id}.avi"
+def _file_name(id):
+    return f"recordings/{id}/{datetime.now().strftime('%b_%d_%Y_%H_%M_%S')}.avi"
 
 def _record(id):
     try:
-        os.makedirs("recordings", exist_ok=True)
+        os.makedirs(f"recordings/{id}", exist_ok=True)
+
+        if is_pi_environment == False:
+            return
         # Open a connection to the external camera (0 is usually the default camera, use 1 for external camera)
         logger_instance.info("Camera starting")
         cap = cv2.VideoCapture(0)

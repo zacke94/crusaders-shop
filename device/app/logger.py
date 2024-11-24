@@ -64,7 +64,7 @@ class Logger:
 
     def _start_log_scheduler(self):
         scheduler = BackgroundScheduler()
-        scheduler.add_job(func=self._extract_todays_logs, trigger='cron', hour=22, minute=20)
+        scheduler.add_job(func=self._extract_todays_logs, trigger='cron', hour=1, minute=0)
         scheduler.start()
 
     def _file_name(self):
