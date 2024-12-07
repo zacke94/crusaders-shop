@@ -1,9 +1,11 @@
-from .pi_utils import *
+from .pi_utils import * 
 from .logger import logger_instance
+import RPi.GPIO as GPIO
 
 class ElectroMagnet:
     _instance = None  # Class-level variable to store singleton instance
     _gpio_pin = 23
+    
 
     def __new__(cls):
         """Ensures only one instance of ElectroMagnet is created (singleton)."""
@@ -15,7 +17,7 @@ class ElectroMagnet:
     def _initialize(self):
         try:
             if is_pi_environment():
-                self.import_module()
+                #self.import_module()
                 self.lock()
                 logger_instance.info("Successfully locked device at startup")
         except Exception as e:
