@@ -127,8 +127,8 @@ def add_order():
         ]
         customer_id = request.json['customerId']
         total_price = request.json['totalPrice']
-        add_order_to_db(customer_id, adjusted_column_name, total_price)
-        return "Success", 200
+        order_id = add_order_to_db(customer_id, adjusted_column_name, total_price)
+        return jsonify({'orderId': order_id})
     except Exception as e:
         logger_instance.error(f"Error in '/add-order': {e}")
         return "Something went wrong", 500
@@ -202,13 +202,13 @@ def get_orders_from_user(user_id):
         logger_instance.error(f"Error in '/get-order/{user_id}': {e}")
         return "Something went wrong", 500
 
-@current_app.route('/unlock-fridge/<id>', methods=['POST'])
-def unlock_fridge(id):
+@current_app.route('/unlock-fridge', methods=['POST'])
+def unlock_fridge():
     try:
         electro_magnet_instance.unlock()
         logger_instance.info("Electro magnet is UNLOCKED")
         if request.json['isAdmin'] == False:
-            record(id)
+            record(request.json['customerId'], request.json['orderId'])
         return "OK", 200
     except Exception as e:
         logger_instance.error(f"Could not unlock electro magnet: {e}")

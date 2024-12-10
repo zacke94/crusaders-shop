@@ -1,6 +1,6 @@
 from .pi_utils import * 
 from .logger import logger_instance
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 
 class ElectroMagnet:
     _instance = None  # Class-level variable to store singleton instance

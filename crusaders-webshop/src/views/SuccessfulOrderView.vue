@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Tack för ditt köp!</h1>
+    <br />
 
     <h3>Tänk på att att vi kameraövervakar, och märker om ni INTE betalar</h3>
     <br />

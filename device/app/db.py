@@ -141,6 +141,11 @@ def delete_products_from_db(id):
         raise Exception(f"Failed to delete product with ID {id}.")
 
 def add_order_to_db(id, products, total_price):
+    product_quantity = _quantity_is_correct(products)
+    
+    if product_quantity > 0:
+        raise Exception(f"Quantity of product '{product_quantity}' is not enough")
+
     new_order_id = _add_order(id, _get_customer_name(id))
 
     connection = sqlite3.connect('crusaders-shop.db')
@@ -148,19 +153,24 @@ def add_order_to_db(id, products, total_price):
     num_of_inserts = 0
 
     for product in products:
+        edit_product_quanity = _edit_product_quanity(product['id'], product['quantity'])
+        if edit_product_quanity == 0:
+            raise Exception(f"Failed to update quantity of product with id {product['id']}")
+
         cursor.execute('''
             INSERT INTO order_products (order_id, product_id, quantity, total_price)
             VALUES (?, ?, ?, ?) 
             ''', (new_order_id, product['id'], product['quantity'], product['total_price']))
+
         if cursor.rowcount > 0:
             num_of_inserts += 1
     
     if num_of_inserts == len(products):
         connection.commit()
-
         cursor.close()
         connection.close()
         logger_instance.info(f"Successfully added products: {products} to 'order_products'")
+        return new_order_id
     else:
         raise Exception("Failed adding order_products")
 
@@ -238,4 +248,35 @@ def _add_order(id, name):
         return new_id
     else:
         raise Exception(f"Failed adding order for (customer_id: {id}, customer_name: {name}).")
-  
+
+def _quantity_is_correct(products): 
+    for product in products:
+        product_quantity = _get_product_quantity(product['id'])
+        print(product_quantity)
+        print(product['quantity'])
+
+        if product_quantity is None or product_quantity < product['quantity']:
+            return product['id']
+    return 0
+
+def _get_product_quantity(product_id):
+    connection = sqlite3.connect('crusaders-shop.db')
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT quantity FROM products WHERE id = {product_id}")
+    result = cursor.fetchone()
+    cursor.close()
+    connection.close()
+
+    return result[0] if result else None
+
+def _edit_product_quanity(product_id, quantity):
+    connection = sqlite3.connect('crusaders-shop.db')
+    cursor = connection.cursor()
+    cursor.execute(f'UPDATE products SET quantity = quantity - {quantity} WHERE id = {product_id}')
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    if cursor.rowcount > 0:
+        logger_instance.info(f"Quantity of product with ID {product_id} updated successfully.")
+    return cursor.rowcount

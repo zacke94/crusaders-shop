@@ -77,22 +77,21 @@ export default {
       openingFridgeState: false,
       showModal: false,
       isLoading: true,
-      seconds: 10,
+      seconds: 20,
       headerMessage: 'Bekräfta köp'
     };
   },
   methods: {
-    async unlockFridge() {
+    async unlockFridge(orderId) {
       this.openingFridgeState = true;
       this.headerMessage = 'Öppnar kylen....';
 
       try {
-        const response = await axios.post(
-          `http://127.0.0.1:5000/unlock-fridge/${this.order.customerId}`,
-          {
-            isAdmin: false
-          }
-        );
+        const response = await axios.post('http://127.0.0.1:5000/unlock-fridge', {
+          isAdmin: false,
+          customerId: this.order.customerId,
+          orderId: orderId
+        });
 
         if (response.status === 200) {
           this.fridgeIsOpen();
@@ -115,7 +114,7 @@ export default {
       try {
         const response = await axios.post('http://127.0.0.1:5000/add-order', this.order);
         if (response.status === 200) {
-          await this.unlockFridge();
+          await this.unlockFridge(response.data.orderId);
         }
       } catch (e) {
         this.$toast.add({

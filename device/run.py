@@ -1,7 +1,6 @@
 from app import create_app
 from app.logger import logger_instance
 from app.electro_magnet import electro_magnet_instance
-import argparse
 
 app = create_app()
 

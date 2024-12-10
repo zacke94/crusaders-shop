@@ -7,17 +7,18 @@ from .logger import logger_instance
 from .pi_utils import *
 
 
-def _file_name(id):
-    return f"recordings/{id}/{datetime.now().strftime('%b_%d_%Y_%H_%M_%S')}.avi"
+def _file_name(customer_path, order_id):
+    return f"{customer_path}/{order_id}_{datetime.now().strftime('%b_%d_%Y_%H_%M_%S')}.avi"
 
-def _record(id):
+def _record(customer_id, order_id):
     try:
-        os.makedirs(f"recordings/{id}", exist_ok=True)
+        customer_path = f"recordings/{customer_id}"
+        os.makedirs(customer_path, exist_ok=True)
 
         if is_pi_environment == False:
             return
         # Open a connection to the external camera (0 is usually the default camera, use 1 for external camera)
-        logger_instance.info("Camera starting")
+        logger_instance.info(f"Recording started for order {order_id} with user {customer_id}")
         cap = cv2.VideoCapture(0)
 
         # Check if the camera opened successfully
@@ -26,7 +27,7 @@ def _record(id):
 
         # Define the codec and create a VideoWriter object to save the video
         fourcc = cv2.VideoWriter_fourcc(*'XVID')  # You can use other codecs like 'MJPG' or 'X264'
-        out = cv2.VideoWriter(_file_name(id), fourcc, 20.0, (640, 480))
+        out = cv2.VideoWriter(_file_name(customer_path, order_id), fourcc, 20.0, (640, 480))
 
         start_time = time.time()
 
@@ -47,15 +48,11 @@ def _record(id):
         # Release everything when done
         cap.release()
         out.release()
-        logger_instance.info("Camera finished")
+        logger_instance.info("Recording ended")
     except Exception as e:
-        logger_instance.error(f"Recording for user {id} failed with: {e}")
+        logger_instance.error(f"Recording for order {order_id} with user {customer_id} failed with: {e}")
 
-
-
-def record(id):
-    thread = threading.Thread(target=_record, args=(id,))
+def record(customer_id, order_id):
+    thread = threading.Thread(target=_record, args=(customer_id, order_id))
     thread.start()
-    thread.join()
-
-    logger_instance.info(f"Recording for user {id} was successful")
+    logger_instance.info(f"Recording for order {order_id} with user {customer_id} was successful")
