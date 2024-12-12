@@ -19,7 +19,7 @@ export default {
   name: 'successful-order-view',
   data() {
     return {
-      seconds: 10
+      seconds: 15
     };
   },
   mounted() {

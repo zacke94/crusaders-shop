@@ -74,9 +74,8 @@ export default {
           await axios.delete('http://127.0.0.1:5000/delete-user', { data: { id: user.id } });
           await this.getUsers();
           this.$toast.add({
-            severity: 'info',
-            summary: 'Confirmed',
-            detail: 'Record deleted',
+            severity: 'success',
+            summary: `Lyckades ta väck ${user.name}`,
             life: 3000
           });
         },

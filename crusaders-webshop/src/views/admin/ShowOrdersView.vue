@@ -1,10 +1,12 @@
 <template>
+  <Toast />
   <Button label="Tillbaka" @click="onClickGoBack"></Button>
 
   <div class="mt-32">
     <h1>Visa ordrar</h1>
 
-    <DataTable v-if="!emptyOrdersList" :value="orders" tableClass="mt-32">
+    <DataTable :value="orders" tableClass="mt-32">
+      <template #empty v-if="emptyOrdersList"> Inga ordrar hittades. </template>
       <Column field="orderId" header="Order id"></Column>
       <Column field="orderDate" header="Order datum"></Column>
       <Column field="customerId" header="Kund id"></Column>
@@ -25,6 +27,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import ShowProductsModal from '@/components/modals/ShowProductsModal.vue';
+import Toast from 'primevue/toast';
 
 export default {
   name: 'ShowOrdersView',
@@ -32,7 +35,8 @@ export default {
     ShowProductsModal,
     DataTable,
     Column,
-    Button
+    Button,
+    Toast
   },
   data() {
     return {
@@ -59,7 +63,12 @@ export default {
         this.orders = response.data.map((order) => new Order(order));
       }
     } catch (e) {
-      console.log(e);
+      this.$toast.add({
+        severity: 'error',
+        summary: 'Något gick fel',
+        detail: 'Skrik på Adam',
+        life: 6000
+      });
     }
   }
 };

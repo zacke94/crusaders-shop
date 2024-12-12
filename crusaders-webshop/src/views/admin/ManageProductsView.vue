@@ -19,7 +19,7 @@
             <Button
               label="Ta bort"
               severity="danger"
-              @click="onClickRemoveProduct($event, slotProps.data.id)"
+              @click="onClickRemoveProduct($event, slotProps.data)"
             ></Button>
           </div>
         </template>
@@ -60,25 +60,41 @@ export default {
     };
   },
   methods: {
-    async onClickRemoveProduct(event, id) {
+    async onClickRemoveProduct(event, product) {
       this.$confirm.require({
         target: event.currentTarget,
-        message: 'Are you sure you want to proceed?',
+        message: `Är du säker att du vill ta väck ${product.name}?`,
         icon: 'pi pi-exclamation-triangle',
         rejectProps: {
-          label: 'Cancel',
+          label: 'Avbryt',
           severity: 'secondary',
           outlined: true
         },
         acceptProps: {
-          label: 'Save'
+          label: 'Ja'
         },
         accept: async () => {
-          await axios.delete(`http://127.0.0.1:5000/delete-product/${id}`);
-          await this.getProducts();
-        },
-        reject: () => {
-          //this.$toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+          try {
+            const response = await axios.delete(
+              `http://127.0.0.1:5000/delete-product/${product.id}`
+            );
+
+            if (response.status === 200) {
+              await this.getProducts();
+              this.$toast.add({
+                severity: 'success',
+                summary: `Lyckades ta väck ${product.name}`,
+                life: 3000
+              });
+            }
+          } catch (e) {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Något gick fel',
+              detail: 'Skrik på Adam',
+              life: 6000
+            });
+          }
         }
       });
     },

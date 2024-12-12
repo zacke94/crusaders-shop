@@ -143,24 +143,25 @@ def get_orders():
             order_id = order[0]
             order_products = get_order_products_from_db(order_id)
 
-            adjusted_column_names = [{
-                'productId': order_product[1],
-                'productName': order_product[2],
-                'quantity': order_product[3],
-                'totalPrice': order_product[4]
-                } for order_product in order_products
-            ]
-            total_price_for_order = [t['totalPrice'] for t in adjusted_column_names]
-            
-            order_dict = {
-                'orderId': order_id,
-                'customerName': order[1],
-                'customerId': order[2],
-                'orderDate': order[3],
-                'totalPrice': sum(total_price_for_order),
-                'products': adjusted_column_names
-            }
-            orders.append(order_dict)
+            if order_products is not None:
+                adjusted_column_names = [{
+                    'productId': order_product[1],
+                    'productName': order_product[2],
+                    'quantity': order_product[3],
+                    'totalPrice': order_product[4]
+                    } for order_product in order_products
+                ]
+                total_price_for_order = [t['totalPrice'] for t in adjusted_column_names]
+                
+                order_dict = {
+                    'orderId': order_id,
+                    'customerName': order[1],
+                    'customerId': order[2],
+                    'orderDate': order[3],
+                    'totalPrice': sum(total_price_for_order),
+                    'products': adjusted_column_names
+                }
+                orders.append(order_dict)
 
         return jsonify(orders), 200
     except Exception as e:

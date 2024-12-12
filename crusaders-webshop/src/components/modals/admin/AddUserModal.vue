@@ -88,6 +88,7 @@ export default {
       try {
         await axios.post('http://127.0.0.1:5000/add-users', this.newUsers);
         this.showModal = false;
+        this.newUsers = [];
         this.$emit('updateUsers');
       } catch (e) {
         this.$toast.add({
@@ -111,7 +112,10 @@ export default {
   },
   computed: {
     disableAddUserButton() {
-      return this.newUser.name.trim() === '';
+      return (
+        this.newUser.name.trim() === '' ||
+        (this.newUser.pinCode && this.newUser.pinCode.length === 0)
+      );
     },
     invalidInput() {
       const invalidInput = !this.newUser.name.match(validInput);

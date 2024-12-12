@@ -64,6 +64,11 @@ export default {
         });
         this.$emit('updateUsers');
         this.showModal = false;
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Lyckades uppdatera pinkod',
+          life: 3000
+        });
       } catch (e) {
         this.$toast.add({
           severity: 'error',

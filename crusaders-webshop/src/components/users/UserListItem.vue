@@ -14,7 +14,6 @@
         </div>
         <KeyPad @handle-pin-code-input="handlePinCodeInput" />
         <p v-if="showError" class="error-message">{{ errorMessage }}</p>
-
         <Toast />
       </div>
     </Dialog>
