@@ -1,6 +1,6 @@
 <template>
   <Button label="Tillbaka" @click="onClickGoBack"></Button>
-
+  <Toast />
   <div class="mt-32">
     <h1>Hantera användare</h1>
 
@@ -32,6 +32,7 @@ import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ConfirmDialog from 'primevue/confirmdialog';
+import Toast from 'primevue/toast';
 
 export default {
   name: 'ManageUsersView',
@@ -41,7 +42,8 @@ export default {
     Button,
     DataTable,
     Column,
-    ConfirmDialog
+    ConfirmDialog,
+    Toast
   },
   data() {
     return {
@@ -71,25 +73,39 @@ export default {
           severity: 'danger'
         },
         accept: async () => {
-          await axios.delete('http://127.0.0.1:5000/delete-user', { data: { id: user.id } });
-          await this.getUsers();
-          this.$toast.add({
-            severity: 'success',
-            summary: `Lyckades ta väck ${user.name}`,
-            life: 3000
-          });
+          try {
+            await axios.delete('http://127.0.0.1:5000/delete-user', { data: { id: user.id } });
+            this.$toast.add({
+              severity: 'success',
+              summary: `Lyckades ta väck ${user.name}`,
+              life: 3000
+            });
+            await this.getUsers();
+          } catch (e) {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Något gick fel',
+              detail: 'Skrik på Adam',
+              life: 6000
+            });
+          }
         },
         reject: () => {}
       });
     },
     async getUsers() {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/users');
+        const response = await axios.get('http://127.0.0.1:5000/all-users');
         if (response.data.users.length > 0) {
           this.users = response.data.users.map((user) => new User(user));
         }
       } catch (e) {
-        console.log(e);
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Något gick fel',
+          detail: 'Skrik på Adam',
+          life: 6000
+        });
       }
     },
     async handleUpdateUsers() {

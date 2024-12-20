@@ -4,14 +4,24 @@ from .camera import record
 from .electro_magnet import electro_magnet_instance
 from .logger import logger_instance
 
-@current_app.route('/users', methods=['GET'])
-def get_users():
+@current_app.route('/active-users', methods=['GET'])
+def get_active_users():
     try:
-        users = get_all_users()
+        users = get_active_users_from_db()
         user_list = [{'id': user[0], 'name': user[1]} for user in users]
         return jsonify({'users': user_list})
     except Exception as e:
-        logger_instance.error(f"Error in '/users': {e}")
+        logger_instance.error(f"Error in '/active-users': {e}")
+        return "Something went wrong", 500
+
+@current_app.route('/all-users', methods=['GET'])
+def get_all_users():
+    try:
+        users = get_all_users_from_db()
+        user_list = [{'id': user[0], 'name': user[1], 'isActive': bool(user[2])} for user in users]
+        return jsonify({'users': user_list})
+    except Exception as e:
+        logger_instance.error(f"Error in '/all-users': {e}")
         return "Something went wrong", 500
 
 @current_app.route('/user/<user_id>', methods=['GET'])

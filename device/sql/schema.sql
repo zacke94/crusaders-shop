@@ -6,7 +6,8 @@ DROP TABLE IF EXISTS products;
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    pin_code INTEGER NULL
+    pin_code INTEGER NULL,
+    is_active INTEGER DEFAULT 1
 );
 
 CREATE TABLE IF NOT EXISTS admin_user (

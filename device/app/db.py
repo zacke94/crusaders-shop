@@ -1,10 +1,19 @@
 import sqlite3
 from .logger import logger_instance
 
-def get_all_users():
+def get_active_users_from_db():
     connection = sqlite3.connect('crusaders-shop.db')
     cursor = connection.cursor()
-    cursor.execute('SELECT id, name FROM users')
+    cursor.execute('SELECT id, name FROM users WHERE is_active = 1')
+    users = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return users
+
+def get_all_users_from_db():
+    connection = sqlite3.connect('crusaders-shop.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT id, name, is_active FROM users')
     users = cursor.fetchall()
     cursor.close()
     connection.close()

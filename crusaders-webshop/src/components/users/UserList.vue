@@ -3,12 +3,16 @@
   <div class="users-wrapper">
     <h1>Välj ditt namn i listan</h1>
     <UserListItem
+      v-if="hasUsers"
       v-for="user in users"
       :key="user.id"
       :id="user.id"
       :user="user"
       class="user-list-item"
     />
+    <div v-else class="mt-16">
+      <p>Inga användare hittades.</p>
+    </div>
   </div>
 </template>
 
@@ -41,8 +45,7 @@ export default {
   },
   async mounted() {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/users');
-
+      const response = await axios.get('http://127.0.0.1:5000/active-users');
       if (response.data.users.length > 0) {
         this.users = response.data.users.map((user) => new User(user));
       }
@@ -53,6 +56,11 @@ export default {
         detail: 'Skrik på Adam',
         life: 6000
       });
+    }
+  },
+  computed: {
+    hasUsers() {
+      return this.users && this.users.length > 0;
     }
   }
 };
