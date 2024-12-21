@@ -1,7 +1,9 @@
 <template>
   <Toast />
-  <Button label="Tillbaka" @click="onClickGoBack"></Button>
-
+  <div class="buttons-grid">
+    <Button label="Tillbaka" @click="onClickGoBack"></Button>
+    <Button label="Logga ut" @click="onClickLogout"></Button>
+  </div>
   <div class="mt-32">
     <h1>Visa ordrar</h1>
 
@@ -28,6 +30,8 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import ShowProductsModal from '@/components/modals/ShowProductsModal.vue';
 import Toast from 'primevue/toast';
+import store from '@/store';
+import router from '@/router';
 
 export default {
   name: 'ShowOrdersView',
@@ -54,6 +58,10 @@ export default {
   methods: {
     async onClickGoBack() {
       await this.$router.back();
+    },
+    async onClickLogout() {
+      await store.dispatch('logoutAdmin');
+      await router.push({ path: '/' });
     }
   },
   async mounted() {

@@ -14,6 +14,7 @@
   </div>
   <div v-else>
     <h1>Inte inloggad</h1>
+    <Button label="Gå till startsida" class="mt-32" @click="onClickGoHome"></Button>
   </div>
 </template>
 
@@ -53,14 +54,10 @@ export default {
     },
     async onClickShowOrders() {
       await router.push({ path: '/admin/show-orders' });
+    },
+    async onClickGoHome() {
+      await router.push({ path: '/' });
     }
   }
 };
 </script>
-
-<style scoped>
-.buttons-grid {
-  display: flex;
-  grid-column-gap: 16px;
-}
-</style>

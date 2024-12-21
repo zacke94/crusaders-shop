@@ -87,7 +87,6 @@ def login():
 def login_admin():
     try:
         request_data = request.json
-    
         if get_admin_pin_code(request_data['pinCode']) == int(request_data['pinCode']):
             return "Success", 200
         else:
@@ -96,14 +95,25 @@ def login_admin():
         logger_instance.error(f"Error in '/login-admin': {e}")
         return "Something went wrong", 500
 
-@current_app.route('/products', methods=['GET'])
-def get_products():
+@current_app.route('/eligible-products', methods=['GET'])
+def get_eligible_products():
     try:
         products = [{'id': product[0], 'name': product[1], 'price': product[2], 'quantity': product[3]} 
-            for product in get_products_from_db()]
+            for product in get_eligible_products_from_db()]
         return jsonify({'products': products})
     except Exception as e:
-        logger_instance.error(f"Error in '/products': {e}")
+        logger_instance.error(f"Error in '/eligible-products': {e}")
+        return "Something went wrong", 500
+
+@current_app.route('/all-products', methods=['GET'])
+def get_all_products():
+    try:
+        products = [{'id': product[0], 'name': product[1], 'price': product[2], 
+            'quantity': product[3], 'showProduct': bool(product[4])} 
+            for product in get_all_products_from_db()]
+        return jsonify({'products': products})
+    except Exception as e:
+        logger_instance.error(f"Error in '/all-products': {e}")
         return "Something went wrong", 500
 
 @current_app.route('/add-product', methods=['POST'])
@@ -124,13 +134,23 @@ def edit_product():
         logger_instance.error(f"Error in '/edit-product': {e}")
         return "Something went wrong", 500
 
-@current_app.route('/delete-product/<id>', methods=['DELETE'])
-def delete_products(id):
+
+@current_app.route('/hide-product/<id>', methods=['PUT'])
+def hide_product(id):
     try:
-        delete_products_from_db(id)
+        hide_product_from_db(id)
         return "Success", 200
     except Exception as e:
-        logger_instance.error(f"Error in '/delete-product/{id}': {e}")
+        logger_instance.error(f"Error in '/hide-product/{id}': {e}")
+        return "Something went wrong", 500
+
+@current_app.route('/show-product/<id>', methods=['PUT'])
+def show_product(id):
+    try:
+        show_product_from_db(id)
+        return "Success", 200
+    except Exception as e:
+        logger_instance.error(f"Error in '/show-product/{id}': {e}")
         return "Something went wrong", 500
 
 @current_app.route('/add-order', methods=['POST'])

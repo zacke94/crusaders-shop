@@ -1,6 +1,6 @@
 <template>
   <Toast />
-  <Button label="Ändra" @click="onClickEditProduct"></Button>
+  <Button label="Ändra" severity="secondary" @click="onClickEditProduct"></Button>
 
   <Dialog
     v-model:visible="showModal"

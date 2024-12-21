@@ -36,9 +36,14 @@
     <div v-else>
       <ProgressSpinner v-if="isLoading" />
       <div v-else>
-        <span class="progress-bar-seconds"
-          >Kylen låses automatiskt om {{ seconds }} sekunder...</span
-        >
+        <p>
+          Totalbelopp: <span class="bold-text">{{ order.totalPrice }} kr</span>
+        </p>
+        <p>Swish: <span class="bold-text">123-651 60 33</span></p>
+        <p class="mt-16">
+          Kylen låses automatiskt om
+          <span class="progress-bar-seconds bold-text">{{ seconds }} sekunder...</span>
+        </p>
       </div>
     </div>
   </Dialog>
@@ -77,7 +82,7 @@ export default {
       openingFridgeState: false,
       showModal: false,
       isLoading: true,
-      seconds: 20,
+      seconds: 30,
       headerMessage: 'Bekräfta köp'
     };
   },

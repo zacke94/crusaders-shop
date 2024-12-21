@@ -50,3 +50,10 @@ a,
   display: flex;
 }
 
+.buttons-grid {
+  display: flex;
+  grid-column-gap: 16px;
+}
+
+
+

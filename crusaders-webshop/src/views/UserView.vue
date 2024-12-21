@@ -1,7 +1,6 @@
 <template>
   <div class="card">
     <Toast />
-    <!-- TODO: change exclamation mark -->
     <div v-if="userIsAuthenticated(userId)">
       <div class="top-buttons">
         <Button label="Logga ut" @click="onClickLogout"></Button>
@@ -67,6 +66,7 @@
     </div>
     <div v-else>
       <h1>Inte inloggad</h1>
+      <Button label="Gå till startsida" class="mt-32" @click="onClickGoHome"></Button>
     </div>
   </div>
 </template>
@@ -156,9 +156,12 @@ export default {
       this.order.totalPrice = this.totalAmount;
       this.order.products = this.orderProducts;
     },
-    onClickLogout() {
-      store.dispatch('logoutUser');
-      router.push({ path: '/' });
+    async onClickLogout() {
+      await store.dispatch('logoutUser');
+      await router.push({ path: '/' });
+    },
+    async onClickGoHome() {
+      await router.push({ path: '/' });
     },
     getQuantityIcon(quantity) {
       return quantity > 0 ? 'pi pi-check' : 'pi pi-times';
@@ -210,7 +213,7 @@ export default {
     }
 
     try {
-      const response = await axios.get('http://127.0.0.1:5000/products');
+      const response = await axios.get('http://127.0.0.1:5000/eligible-products');
       if (response.data.products.length > 0) {
         this.products = response.data.products.map(
           (product) =>

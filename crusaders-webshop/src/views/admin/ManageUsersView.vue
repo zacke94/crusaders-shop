@@ -1,5 +1,9 @@
 <template>
-  <Button label="Tillbaka" @click="onClickGoBack"></Button>
+  <div class="buttons-grid">
+    <Button label="Tillbaka" @click="onClickGoBack"></Button>
+    <Button label="Logga ut" @click="onClickLogout"></Button>
+  </div>
+
   <Toast />
   <div class="mt-32">
     <h1>Hantera användare</h1>
@@ -16,19 +20,21 @@
       </Column>
       <Column>
         <template #body="slotProps">
-          <EditUserModal :id="slotProps.data.id" @update-users="handleUpdateUsers" />
-          <Button
-            v-if="slotProps.data.isActive"
-            label="Inaktivera"
-            severity="danger"
-            @click="onClickInactivateUser(slotProps.data)"
-          ></Button>
-          <Button
-            v-else
-            label="Aktivera"
-            severity="success"
-            @click="onClickActivateUser(slotProps.data)"
-          ></Button>
+          <div class="buttons-grid">
+            <EditUserModal :id="slotProps.data.id" @update-users="handleUpdateUsers" />
+            <Button
+              v-if="slotProps.data.isActive"
+              label="Inaktivera"
+              severity="danger"
+              @click="onClickInactivateUser(slotProps.data)"
+            ></Button>
+            <Button
+              v-else
+              label="Aktivera"
+              severity="success"
+              @click="onClickActivateUser(slotProps.data)"
+            ></Button>
+          </div>
         </template>
       </Column>
     </DataTable>
@@ -45,6 +51,8 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
+import store from '@/store';
+import router from '@/router';
 
 export default {
   name: 'ManageUsersView',
@@ -158,6 +166,10 @@ export default {
     },
     async onClickGoBack() {
       await this.$router.back();
+    },
+    async onClickLogout() {
+      await store.dispatch('logoutAdmin');
+      await router.push({ path: '/' });
     },
     isActive(user) {
       return user.isActive ? 'Ja' : 'Nej';

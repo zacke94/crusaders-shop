@@ -103,7 +103,16 @@ def get_admin_pin_code(pin_code):
     connection.close()
     return result[0] if result else None
 
-def get_products_from_db():
+def get_eligible_products_from_db():
+    connection = sqlite3.connect('crusaders-shop.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT id, name, price, quantity FROM products WHERE show_product = 1')
+    products = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return products
+
+def get_all_products_from_db():
     connection = sqlite3.connect('crusaders-shop.db')
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM products')
@@ -112,12 +121,37 @@ def get_products_from_db():
     connection.close()
     return products
 
+def hide_product_from_db(id):
+    connection = sqlite3.connect('crusaders-shop.db')
+    cursor = connection.cursor()
+    cursor.execute(f'UPDATE products SET show_product = 0 WHERE id = {id}')
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    if cursor.rowcount > 0:
+        logger_instance.info(f"Hid product with ID {id} successfully.")
+    else:
+        raise Exception(f"Failed to hide product with id {id}.")
+
+def show_product_from_db(id):
+    connection = sqlite3.connect('crusaders-shop.db')
+    cursor = connection.cursor()
+    cursor.execute(f'UPDATE products SET show_product = 1 WHERE id = {id}')
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    if cursor.rowcount > 0:
+        logger_instance.info(f"Shown product with ID {id} successfully.")
+    else:
+        raise Exception(f"Failed to hide product with id {id}.")
+
 def add_product_to_db(name, price):
     connection = sqlite3.connect('crusaders-shop.db')
     cursor = connection.cursor()
     cursor.execute(f'INSERT INTO products (name, price) VALUES (?, ?)', (name, price))
     connection.commit()
-
     cursor.close()
     connection.close()
 

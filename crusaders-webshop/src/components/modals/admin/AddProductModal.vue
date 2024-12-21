@@ -64,6 +64,7 @@ export default {
         await axios.post('http://127.0.0.1:5000/add-product', this.newProduct);
         await this.$emit('updateProducts');
         this.showModal = false;
+        this.product = new Product();
       } catch (e) {
         this.$toast.add({
           severity: 'error',
