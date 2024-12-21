@@ -30,7 +30,7 @@ def get_user(user_id):
         user = get_user_from_db(user_id)
         return jsonify({"id": user[0], "name": user[1]})
     except Exception as e:
-        logger_instance.error(f"Error in '/user/{userid}': {e}")
+        logger_instance.error(f"Error in '/user/{user_id}': {e}")
         return "Something went wrong", 500
 
 @current_app.route('/add-users', methods=['POST'])
@@ -43,13 +43,22 @@ def add_users():
         logger_instance.error(f"Could not add users: {e}")
         return "Something went wrong", 500
 
-@current_app.route('/delete-user', methods=['DELETE'])
-def delete_user():
+@current_app.route('/inactivate-user/<user_id>', methods=['PUT'])
+def inactive_user(user_id):
     try:
-        delete_user_from_db(request.json['id'])
+        inactive_user_from_db(user_id)
         return "Success", 200
     except Exception as e:
-        logger_instance.error(f"Could not delete user: {e}")
+        logger_instance.error(f"Error in '/inactivate-user/{user_id}': {e}")
+        return "Something went wrong", 500
+
+@current_app.route('/activate-user/<user_id>', methods=['PUT'])
+def active_user(user_id):
+    try:
+        active_user_from_db(user_id)
+        return "Success", 200
+    except Exception as e:
+        logger_instance.error(f"Error in '/activate-user/{user_id}': {e}")
         return "Something went wrong", 500
 
 @current_app.route('/change-pin-code', methods=['PUT'])

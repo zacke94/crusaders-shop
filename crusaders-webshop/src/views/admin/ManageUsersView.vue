@@ -9,13 +9,25 @@
 
     <DataTable v-if="!emptyUsersList" :value="users" tableClass="mt-16">
       <Column field="name" header="Namn"></Column>
+      <Column header="Aktiv">
+        <template #body="slotProps">
+          <p>{{ isActive(slotProps.data) }}</p>
+        </template>
+      </Column>
       <Column>
         <template #body="slotProps">
           <EditUserModal :id="slotProps.data.id" @update-users="handleUpdateUsers" />
           <Button
-            label="Ta bort"
+            v-if="slotProps.data.isActive"
+            label="Inaktivera"
             severity="danger"
-            @click="onClickRemoveUser(slotProps.data)"
+            @click="onClickInactivateUser(slotProps.data)"
+          ></Button>
+          <Button
+            v-else
+            label="Aktivera"
+            severity="success"
+            @click="onClickActivateUser(slotProps.data)"
           ></Button>
         </template>
       </Column>
@@ -58,9 +70,9 @@ export default {
     }
   },
   methods: {
-    async onClickRemoveUser(user) {
+    async onClickInactivateUser(user) {
       this.$confirm.require({
-        message: `Vill du ta väck ${user.name}?`,
+        message: `Vill du ta inaktivera ${user.name}?`,
         header: 'Varning',
         icon: 'pi pi-info-circle',
         rejectProps: {
@@ -69,15 +81,15 @@ export default {
           outlined: true
         },
         acceptProps: {
-          label: 'Radera',
+          label: 'Ja',
           severity: 'danger'
         },
         accept: async () => {
           try {
-            await axios.delete('http://127.0.0.1:5000/delete-user', { data: { id: user.id } });
+            await axios.put(`http://127.0.0.1:5000/inactivate-user/${user.id}`);
             this.$toast.add({
               severity: 'success',
-              summary: `Lyckades ta väck ${user.name}`,
+              summary: `Lyckades inaktivera ${user.name}`,
               life: 3000
             });
             await this.getUsers();
@@ -89,8 +101,41 @@ export default {
               life: 6000
             });
           }
+        }
+      });
+    },
+    async onClickActivateUser(user) {
+      this.$confirm.require({
+        message: `Vill du ta aktivera ${user.name}?`,
+        header: 'Varning',
+        icon: 'pi pi-info-circle',
+        rejectProps: {
+          label: 'Avbryt',
+          severity: 'secondary',
+          outlined: true
         },
-        reject: () => {}
+        acceptProps: {
+          label: 'Ja',
+          severity: 'danger'
+        },
+        accept: async () => {
+          try {
+            await axios.put(`http://127.0.0.1:5000/activate-user/${user.id}`);
+            this.$toast.add({
+              severity: 'success',
+              summary: `Lyckades aktivera ${user.name}`,
+              life: 3000
+            });
+            await this.getUsers();
+          } catch (e) {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Något gick fel',
+              detail: 'Skrik på Adam',
+              life: 6000
+            });
+          }
+        }
       });
     },
     async getUsers() {
@@ -113,6 +158,9 @@ export default {
     },
     async onClickGoBack() {
       await this.$router.back();
+    },
+    isActive(user) {
+      return user.isActive ? 'Ja' : 'Nej';
     }
   },
   async mounted() {

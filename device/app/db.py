@@ -51,7 +51,6 @@ def edit_pin_code(id, pin_code):
     else:
         raise Exception(f"User with ID {id} failed update pin code.")
 
-
 def add_users_to_db(users):
     connection = sqlite3.connect('crusaders-shop.db')
     cursor = connection.cursor()
@@ -69,19 +68,31 @@ def add_users_to_db(users):
     else:
         raise Exception(f"Failed updating users: {users}.")
 
-def delete_user_from_db(user_id):
+def inactive_user_from_db(user_id):
     connection = sqlite3.connect('crusaders-shop.db')
     cursor = connection.cursor()
-    cursor.execute(f'DELETE FROM users WHERE id = {user_id}')
+    cursor.execute(f'UPDATE users SET is_active = 0 WHERE id = {user_id}')
     connection.commit()
-
     cursor.close()
     connection.close()
 
     if cursor.rowcount > 0:
-        logger_instance.info(f"User {user_id} deleted successfully.")
+        logger_instance.info(f"Inactivated user with ID {user_id} updated successfully.")
     else:
-        raise Exception(f"No user found with ID {user_id}.")
+        raise Exception(f"Failed to inactive user with id {user_id}.")
+
+def active_user_from_db(user_id):
+    connection = sqlite3.connect('crusaders-shop.db')
+    cursor = connection.cursor()
+    cursor.execute(f'UPDATE users SET is_active = 1 WHERE id = {user_id}')
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    if cursor.rowcount > 0:
+        logger_instance.info(f"Activated user with ID {user_id} updated successfully.")
+    else:
+        raise Exception(f"Failed to active user with id {user_id}.")
 
 def get_admin_pin_code(pin_code):
     connection = sqlite3.connect('crusaders-shop.db')

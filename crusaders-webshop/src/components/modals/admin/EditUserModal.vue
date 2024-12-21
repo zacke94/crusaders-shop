@@ -1,6 +1,6 @@
 <template>
   <Toast />
-  <Button label="Ändra pin" @click="onClickEditPinCode"></Button>
+  <Button label="Ändra pin" severity="secondary" @click="onClickEditPinCode"></Button>
 
   <Dialog
     v-model:visible="showModal"
