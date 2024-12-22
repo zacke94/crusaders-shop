@@ -7,6 +7,13 @@
   font-weight: normal;
 }
 
+input:hover,
+a:hover,
+.p-button:hover,
+.p-button:disabled:hover {
+  cursor: none;
+}
+
 a,
 .green {
   text-decoration: none;
