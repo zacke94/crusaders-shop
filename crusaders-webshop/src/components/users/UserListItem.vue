@@ -23,13 +23,14 @@
 <script>
 import Dialog from 'primevue/dialog';
 import InputOtp from 'primevue/inputotp';
-import axios from 'axios';
 import { User } from '@/models/User';
 import router from '@/router';
 import KeyPad from '@/components/KeyPad.vue';
 import Button from 'primevue/button';
 import store from '@/store';
 import Toast from 'primevue/toast';
+import UserService from '@/services/user-service';
+import ToastService from '@/services/toast-service';
 
 export default {
   name: 'UserListItem',
@@ -57,30 +58,22 @@ export default {
   watch: {
     async pinCode() {
       if (this.pinCode.length === 4) {
-        const passwordRequest = {
+        const request = {
           id: this.user.id,
           pinCode: this.pinCode
         };
 
         try {
-          const response = await axios.post('http://127.0.0.1:5000/login-user', passwordRequest);
-
-          if (response.status === 200) {
-            await store.dispatch('loginUser', this.user.id);
-            this.closeModal();
-            await router.push({ path: `/user/${this.user.id}` });
-          }
+          await UserService.loginUser(request);
+          await store.dispatch('loginUser', this.user.id);
+          this.closeModal();
+          await router.push({ path: `/user/${this.user.id}` });
         } catch (e) {
           if (e.response.status === 401) {
             this.errorMessage = 'Fel pinkod';
             this.showError = true;
           } else {
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Något gick fel',
-              detail: 'Skrik på Adam',
-              life: 10000
-            });
+            ToastService.showError(this.$toast);
           }
         }
         this.pinCode = '';
@@ -89,7 +82,6 @@ export default {
       }
     }
   },
-  async created() {},
   methods: {
     onClickOpenModal() {
       this.showModal = true;

@@ -31,8 +31,9 @@ import InputOtp from 'primevue/inputotp';
 import store from '@/store';
 import router from '@/router';
 import KeyPad from '@/components/KeyPad.vue';
-import axios from 'axios';
 import Toast from 'primevue/toast';
+import AdminService from '@/services/admin-service';
+import ToastService from '@/services/toast-service';
 
 export default {
   name: 'HomeView',
@@ -56,25 +57,15 @@ export default {
     async pinCode() {
       if (this.pinCode.length === 6) {
         try {
-          const response = await axios.post('http://127.0.0.1:5000/login-admin', {
-            pinCode: this.pinCode
-          });
-
-          if (response.status === 200) {
-            await store.dispatch('loginAdmin');
-            this.closeModal();
-            await router.push({ path: '/admin' });
-          }
+          await AdminService.loginAdmin({ pinCode: this.pinCode });
+          await store.dispatch('loginAdmin');
+          this.closeModal();
+          await router.push({ path: '/admin' });
         } catch (e) {
           if (e.response.status === 401) {
             this.errorMessage = 'Fel pinkod';
           } else {
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Något gick fel',
-              detail: 'Skrik på Adam',
-              life: 6000
-            });
+            ToastService.showError(this.$toast);
           }
           this.showError = true;
         }

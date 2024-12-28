@@ -48,14 +48,14 @@ import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ConfirmDialog from 'primevue/confirmdialog';
-import axios from 'axios';
-import { Product } from '@/models/Product';
 import ConfirmPopup from 'primevue/confirmpopup';
 import EditProductModal from '@/components/modals/admin/EditProductModal.vue';
 import AddProductModal from '@/components/modals/admin/AddProductModal.vue';
 import Toast from 'primevue/toast';
 import store from '@/store';
 import router from '@/router';
+import ProductService from '@/services/product-service';
+import ToastService from '@/services/toast-service';
 
 export default {
   name: 'ManageProductsView',
@@ -92,22 +92,11 @@ export default {
         },
         accept: async () => {
           try {
-            const response = await axios.put(`http://127.0.0.1:5000/hide-product/${product.id}`);
-            if (response.status === 200) {
-              await this.getProducts();
-              this.$toast.add({
-                severity: 'success',
-                summary: `Lyckades ta dölja ${product.name}`,
-                life: 3000
-              });
-            }
-          } catch (e) {
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Något gick fel',
-              detail: 'Skrik på Adam',
-              life: 6000
-            });
+            await ProductService.hideProduct(product.id);
+            await this.getProducts();
+            ToastService.showSuccess(this.$toast, `${product.name} är nu dold`);
+          } catch {
+            ToastService.showError(this.$toast);
           }
         }
       });
@@ -127,22 +116,11 @@ export default {
         },
         accept: async () => {
           try {
-            const response = await axios.put(`http://127.0.0.1:5000/show-product/${product.id}`);
-            if (response.status === 200) {
-              await this.getProducts();
-              this.$toast.add({
-                severity: 'success',
-                summary: `Lyckades ta visa ${product.name}`,
-                life: 3000
-              });
-            }
-          } catch (e) {
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Något gick fel',
-              detail: 'Skrik på Adam',
-              life: 6000
-            });
+            await ProductService.showProduct(product.id);
+            await this.getProducts();
+            ToastService.showSuccess(this.$toast, `${product.name} är nu synlig.`);
+          } catch {
+            ToastService.showError(this.$toast);
           }
         }
       });
@@ -152,26 +130,9 @@ export default {
     },
     async getProducts() {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/all-products');
-        if (response.data.products.length > 0) {
-          this.products = response.data.products.map(
-            (product) =>
-              new Product({
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                quantity: product.quantity,
-                showProduct: product.showProduct
-              })
-          );
-        }
-      } catch (e) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Något gick fel',
-          detail: 'Skrik på Adam',
-          life: 6000
-        });
+        this.products = await ProductService.getAllProducts();
+      } catch {
+        ToastService.showError(this.$toast);
       }
     },
     async onClickGoBack() {

@@ -42,7 +42,7 @@ def _record(customer_id, order_id):
             out.write(frame)
 
             # Break the loop after 10 seconds or if 'q' is pressed
-            if time.time() - start_time > 10:
+            if time.time() - start_time > 30:
                 break
 
         # Release everything when done

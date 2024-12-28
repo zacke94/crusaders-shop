@@ -30,8 +30,9 @@ import Dialog from 'primevue/dialog';
 import { User } from '@/models/User';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import axios from 'axios';
 import Toast from 'primevue/toast';
+import UserService from '@/services/user-service';
+import ToastService from '@/services/toast-service';
 
 export default {
   name: 'EditUserModal',
@@ -58,24 +59,16 @@ export default {
   methods: {
     async onClickSave() {
       try {
-        await axios.put('http://127.0.0.1:5000/change-pin-code', {
+        await UserService.changePinCode({
           id: this.id,
           pinCode: parseInt(this.user.pinCode)
         });
+
         this.$emit('updateUsers');
         this.showModal = false;
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Lyckades uppdatera pinkod',
-          life: 3000
-        });
-      } catch (e) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Något gick fel',
-          detail: 'Skrik på Adam',
-          life: 6000
-        });
+        ToastService.showSuccess(this.$toast, 'Lyckades uppdatera pinkod');
+      } catch {
+        ToastService.showError(this.$toast);
       }
     },
     onClickEditPinCode() {

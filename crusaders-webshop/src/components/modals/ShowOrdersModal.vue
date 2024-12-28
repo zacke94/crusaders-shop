@@ -39,10 +39,10 @@
 import Dialog from 'primevue/dialog';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import { Order } from '@/models/Order';
 import Button from 'primevue/button';
-import axios from 'axios';
 import ShowProductsModal from '@/components/modals/ShowProductsModal.vue';
+import OrderService from '@/services/order-service';
+import ToastService from '@/services/toast-service';
 
 export default {
   name: 'ShowOrdersModal',
@@ -68,17 +68,9 @@ export default {
   },
   async created() {
     try {
-      const response = await axios.get(`http://127.0.0.1:5000/get-order/${this.userId}`);
-      if (response.data.length > 0) {
-        this.orders = response.data.map((order) => new Order(order));
-      }
-    } catch (error) {
-      this.$toast.add({
-        severity: 'error',
-        summary: 'Något gick fel',
-        detail: 'Skrik på Adam',
-        life: 6000
-      });
+      this.orders = await OrderService.getOrder(parseInt(this.userId));
+    } catch {
+      ToastService.showError(this.$toast);
     }
   },
   methods: {

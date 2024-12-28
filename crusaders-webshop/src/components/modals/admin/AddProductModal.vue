@@ -30,10 +30,11 @@ import Dialog from 'primevue/dialog';
 import { Product } from '@/models/Product';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import axios from 'axios';
 import Toast from 'primevue/toast';
 import { Form, FormField } from '@primevue/forms';
 import Message from 'primevue/message';
+import ProductService from '@/services/product-service';
+import ToastService from '@/services/toast-service';
 
 export default {
   name: 'AddProductModal',
@@ -61,17 +62,12 @@ export default {
   methods: {
     async onClickSave() {
       try {
-        await axios.post('http://127.0.0.1:5000/add-product', this.newProduct);
+        await ProductService.addProduct(this.newProduct);
         await this.$emit('updateProducts');
         this.showModal = false;
         this.product = new Product();
-      } catch (e) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Något gick fel',
-          detail: 'Skrik på Adam',
-          life: 6000
-        });
+      } catch {
+        ToastService.showError(this.$toast);
       }
     },
     onClickAddProduct() {

@@ -42,7 +42,6 @@ def edit_pin_code(id, pin_code):
     cursor = connection.cursor()
     cursor.execute(f'UPDATE users SET pin_code = {pin_code} WHERE id = {id}')
     connection.commit()
-
     cursor.close()
     connection.close()
 

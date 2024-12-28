@@ -57,9 +57,11 @@ import router from '@/router';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import { Order } from '@/models/Order';
-import axios from 'axios';
 import store from '@/store';
 import Toast from 'primevue/toast';
+import FridgeService from '@/services/fridge-service';
+import ToastService from '@/services/toast-service';
+import OrderService from '@/services/order-service';
 
 export default {
   name: 'ConfirmOrderModal',
@@ -92,22 +94,15 @@ export default {
       this.headerMessage = 'Öppnar kylen....';
 
       try {
-        const response = await axios.post('http://127.0.0.1:5000/unlock-fridge', {
+        const requestData = {
           isAdmin: false,
           customerId: this.order.customerId,
           orderId: orderId
-        });
-
-        if (response.status === 200) {
-          this.fridgeIsOpen();
-        }
-      } catch (e) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Något gick fel',
-          detail: 'Skrik på Adam',
-          life: 6000
-        });
+        };
+        await FridgeService.unlockFridge(requestData);
+        this.fridgeIsOpen();
+      } catch {
+        ToastService.showError(this.$toast);
         this.isLoading = false;
         this.openingFridgeState = false;
         this.onClickCloseModal();
@@ -117,17 +112,10 @@ export default {
       this.isLoading = true;
 
       try {
-        const response = await axios.post('http://127.0.0.1:5000/add-order', this.order);
-        if (response.status === 200) {
-          await this.unlockFridge(response.data.orderId);
-        }
-      } catch (e) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Något gick fel',
-          detail: 'Skrik på Adam',
-          life: 6000
-        });
+        const orderId = await OrderService.addOrder(this.order);
+        await this.unlockFridge(orderId);
+      } catch {
+        ToastService.showError(this.$toast);
       }
       this.isLoading = false;
     },
@@ -154,19 +142,12 @@ export default {
       this.isLoading = true;
 
       try {
-        const response = await axios.post('http://127.0.0.1:5000/lock-fridge');
-        if (response.status === 200) {
-          this.onClickCloseModal();
-          await router.push({ path: `/successful-order/${this.order.customerId}` });
-          await store.dispatch('logoutUser', this.order.customerId);
-        }
-      } catch (e) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Något gick fel',
-          detail: 'Skrik på Adam',
-          life: 6000
-        });
+        await FridgeService.lockFridge();
+        this.onClickCloseModal();
+        await router.push({ path: `/successful-order/${this.order.customerId}` });
+        await store.dispatch('logoutUser', this.order.customerId);
+      } catch {
+        ToastService.showError(this.$toast);
       }
       this.isLoading = false;
     },

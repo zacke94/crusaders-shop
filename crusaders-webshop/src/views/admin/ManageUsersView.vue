@@ -11,7 +11,7 @@
     <AddUserModal :users="users" @update-users="handleUpdateUsers" />
     <ConfirmDialog></ConfirmDialog>
 
-    <DataTable v-if="!emptyUsersList" :value="users" tableClass="mt-16">
+    <DataTable v-if="!hasUsers" :value="users" tableClass="mt-16">
       <Column field="name" header="Namn"></Column>
       <Column header="Aktiv">
         <template #body="slotProps">
@@ -44,8 +44,6 @@
 <script>
 import AddUserModal from '@/components/modals/admin/AddUserModal.vue';
 import EditUserModal from '@/components/modals/admin/EditUserModal.vue';
-import axios from 'axios';
-import { User } from '@/models/User';
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -53,6 +51,8 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
 import store from '@/store';
 import router from '@/router';
+import UserService from '@/services/user-service';
+import ToastService from '@/services/toast-service';
 
 export default {
   name: 'ManageUsersView',
@@ -73,8 +73,8 @@ export default {
     };
   },
   computed: {
-    emptyUsersList() {
-      return this.users.length === 0;
+    hasUsers() {
+      return this.users && this.users.length === 0;
     }
   },
   methods: {
@@ -94,20 +94,11 @@ export default {
         },
         accept: async () => {
           try {
-            await axios.put(`http://127.0.0.1:5000/inactivate-user/${user.id}`);
-            this.$toast.add({
-              severity: 'success',
-              summary: `Lyckades inaktivera ${user.name}`,
-              life: 3000
-            });
+            await UserService.inactivateUser(user.id);
+            ToastService.showSuccess(this.$toast, `Lyckades inaktivera ${user.name}`);
             await this.getUsers();
-          } catch (e) {
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Något gick fel',
-              detail: 'Skrik på Adam',
-              life: 6000
-            });
+          } catch {
+            ToastService.showError(this.$toast);
           }
         }
       });
@@ -128,37 +119,20 @@ export default {
         },
         accept: async () => {
           try {
-            await axios.put(`http://127.0.0.1:5000/activate-user/${user.id}`);
-            this.$toast.add({
-              severity: 'success',
-              summary: `Lyckades aktivera ${user.name}`,
-              life: 3000
-            });
+            await UserService.activateUser(user.id);
+            ToastService.showSuccess(this.$toast, `Lyckades aktivera ${user.name}`);
             await this.getUsers();
-          } catch (e) {
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Något gick fel',
-              detail: 'Skrik på Adam',
-              life: 6000
-            });
+          } catch {
+            ToastService.showError(this.$toast);
           }
         }
       });
     },
     async getUsers() {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/all-users');
-        if (response.data.users.length > 0) {
-          this.users = response.data.users.map((user) => new User(user));
-        }
-      } catch (e) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Något gick fel',
-          detail: 'Skrik på Adam',
-          life: 6000
-        });
+        this.users = await UserService.getAllUsers();
+      } catch {
+        ToastService.showError(this.$toast);
       }
     },
     async handleUpdateUsers() {

@@ -17,23 +17,15 @@
 </template>
 
 <script>
-import { User } from '@/models/User';
-import Button from 'primevue/button';
-import axios from 'axios';
 import UserListItem from './UserListItem.vue';
-import Dialog from 'primevue/dialog';
-import InputOtp from 'primevue/inputotp';
-import ScrollPanel from 'primevue/scrollpanel';
 import Toast from 'primevue/toast';
+import UserService from '@/services/user-service';
+import ToastService from '@/services/toast-service';
 
 export default {
   name: 'UserList',
   components: {
     UserListItem,
-    Button,
-    Dialog,
-    InputOtp,
-    ScrollPanel,
     Toast
   },
   data() {
@@ -45,17 +37,9 @@ export default {
   },
   async mounted() {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/active-users');
-      if (response.data.users.length > 0) {
-        this.users = response.data.users.map((user) => new User(user));
-      }
-    } catch (e) {
-      this.$toast.add({
-        severity: 'error',
-        summary: 'Något gick fel',
-        detail: 'Skrik på Adam',
-        life: 6000
-      });
+      this.users = await UserService.getActiveUsers();
+    } catch {
+      ToastService.showError(this.$toast);
     }
   },
   computed: {

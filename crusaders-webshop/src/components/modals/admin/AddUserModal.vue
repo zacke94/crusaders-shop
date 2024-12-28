@@ -43,8 +43,9 @@ import { User } from '@/models/User';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputNumber from 'primevue/inputnumber';
-import axios from 'axios';
 import Toast from 'primevue/toast';
+import UserService from '@/services/user-service';
+import ToastService from '@/services/toast-service';
 
 const validInput = '^[a-zA-ZäÄöÖåÅ]*$';
 
@@ -86,17 +87,13 @@ export default {
     },
     async onClickSave() {
       try {
-        await axios.post('http://127.0.0.1:5000/add-users', this.newUsers);
+        await UserService.addUsers(this.newUsers);
         this.showModal = false;
         this.newUsers = [];
         this.$emit('updateUsers');
-      } catch (e) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Något gick fel',
-          detail: 'Skrik på Adam',
-          life: 6000
-        });
+        ToastService.showSuccess(this.$toast, 'Användare har lagts till');
+      } catch {
+        ToastService.showError(this.$toast);
       }
     },
     addUser() {

@@ -78,15 +78,16 @@ import Dialog from 'primevue/dialog';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ConfirmOrderModal from '@/components/modals/ConfirmOrderModal.vue';
-import axios from 'axios';
 import { Order } from '@/models/Order';
 import router from '@/router';
 import { storeMixin } from '@/mixins/store-mixin';
 import store from '@/store';
 import Toast from 'primevue/toast';
-import { User } from '@/models/User';
 import ShowOrdersModal from '@/components/modals/ShowOrdersModal.vue';
 import { Tag } from 'primevue';
+import UserService from '@/services/user-service';
+import ToastService from '@/services/toast-service';
+import ProductService from '@/services/product-service';
 
 export default {
   name: 'UserView',
@@ -199,39 +200,10 @@ export default {
     });
 
     try {
-      const response = await axios.get(`http://127.0.0.1:5000/user/${this.userId}`);
-      if (response.data) {
-        this.user = new User(response.data);
-      }
-    } catch (error) {
-      this.$toast.add({
-        severity: 'error',
-        summary: 'Något gick fel',
-        detail: 'Skrik på Adam',
-        life: 6000
-      });
-    }
-
-    try {
-      const response = await axios.get('http://127.0.0.1:5000/eligible-products');
-      if (response.data.products.length > 0) {
-        this.products = response.data.products.map(
-          (product) =>
-            new Product({
-              id: product.id,
-              name: product.name,
-              price: product.price,
-              quantity: product.quantity
-            })
-        );
-      }
-    } catch (error) {
-      this.$toast.add({
-        severity: 'error',
-        summary: 'Något gick fel',
-        detail: 'Skrik på Adam',
-        life: 6000
-      });
+      this.user = UserService.getUser(parseInt(this.userId));
+      this.products = await ProductService.getEligibleProducts();
+    } catch {
+      ToastService.showError(this.$toast);
     }
   }
 };

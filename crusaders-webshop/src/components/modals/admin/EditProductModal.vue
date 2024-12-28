@@ -29,9 +29,10 @@ import { Product } from '@/models/Product';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import axios from 'axios';
 import Toast from 'primevue/toast';
 import InputNumber from 'primevue/inputnumber';
+import ProductService from '@/services/product-service';
+import ToastService from '@/services/toast-service';
 
 export default {
   name: 'EditProductModal',
@@ -58,22 +59,12 @@ export default {
   methods: {
     async onClickSave() {
       try {
-        await axios.put('http://127.0.0.1:5000/edit-product', this.updatedProduct);
+        await ProductService.editProduct(this.updatedProduct);
         this.$emit('updateProducts');
-
-        this.$toast.add({
-          severity: 'success',
-          summary: `Uppdaterade '${this.product.name}'`,
-          life: 6000
-        });
+        ToastService.showSuccess(this.$toast, `Uppdaterade '${this.product.name}'`);
         this.showModal = false;
-      } catch (e) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Något gick fel',
-          detail: 'Skrik på Adam',
-          life: 6000
-        });
+      } catch {
+        ToastService.showError(this.$toast);
       }
     },
     onClickEditProduct() {
