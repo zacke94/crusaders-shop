@@ -182,17 +182,23 @@ def edit_product_db(id, name, price, quantity):
     else:
         raise Exception(f"Product with ID {id} failed update.")
 
+def delete_order_from_db(order_id):
+    try:
+        connection = sqlite3.connect('crusaders-shop.db')
+        connection.execute("BEGIN TRANSACTION;")
 
-def delete_products_from_db(id):
-    connection = sqlite3.connect('crusaders-shop.db')
-    cursor = connection.cursor()
-    cursor.execute(f'DELETE FROM products WHERE id = {id}')
-    connection.commit()
+        connection.execute(f'DELETE FROM orders WHERE id = {order_id}')
+        connection.execute(f'DELETE FROM order_products WHERE order_id = {order_id}')
+        connection.commit()
 
-    if cursor.rowcount > 0:
-        logger_instance.info(f"Product with {id} deleted successfully.")
-    else:
-        raise Exception(f"Failed to delete product with ID {id}.")
+    except sqlite3.Error as e:
+        connection.rollback()
+        connection.close()
+        raise Exception(f"Failed to delete order with ID {order_id}.")
+    
+    finally:
+        logger_instance.info(f"Order with {order_id} deleted successfully.")
+        connection.close()
 
 def add_order_to_db(id, products, total_price):
     product_quantity = _quantity_is_correct(products)
@@ -306,8 +312,6 @@ def _add_order(id, name):
 def _quantity_is_correct(products): 
     for product in products:
         product_quantity = _get_product_quantity(product['id'])
-        print(product_quantity)
-        print(product['quantity'])
 
         if product_quantity is None or product_quantity < product['quantity']:
             return product['id']

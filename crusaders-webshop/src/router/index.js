@@ -5,8 +5,8 @@ import SuccessfulOrderView from '@/views/SuccessfulOrderView.vue';
 import AdminView from '../views/admin/AdminView.vue';
 import ManageUsersView from '@/views/admin/ManageUsersView.vue';
 import ManageProductsView from '@/views/admin/ManageProductsView.vue';
-import ShowOrdersView from '@/views/admin/ShowOrdersView.vue';
 import UserView from '@/views/UserView.vue';
+import ManageOrdersView from '@/views/admin/ManageOrdersView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,8 +46,8 @@ const router = createRouter({
           component: ManageProductsView
         },
         {
-          path: 'show-orders',
-          component: ShowOrdersView
+          path: 'manage-orders',
+          component: ManageOrdersView
         }
       ]
     }

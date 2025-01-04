@@ -171,7 +171,16 @@ def add_order():
     except Exception as e:
         logger_instance.error(f"Error in '/add-order': {e}")
         return "Something went wrong", 500
-    
+
+@current_app.route('/delete-order/<order_id>', methods=['DELETE'])
+def delete_order(order_id):
+    try:
+        delete_order_from_db(order_id)
+        return "Success", 200
+    except Exception as e:
+        logger_instance.error(f"Error in '/delete-order/{order_id}': {e}")
+        return "Something went wrong", 500
+
 @current_app.route('/get-orders', methods=['GET'])
 def get_orders():
     orders = []

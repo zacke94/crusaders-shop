@@ -28,7 +28,7 @@ cur.execute("INSERT INTO users (name, pin_code) VALUES (?, ?)", ('Markus Österb
 cur.execute("INSERT INTO users (name, pin_code) VALUES (?, ?)", ('Markus Österberg', 1111))
 cur.execute("INSERT INTO users (name, pin_code) VALUES (?, ?)", ('Markus Österberg', 1111))
 cur.execute("INSERT INTO admin_user (pin_code) VALUES (?)", (941022,))
-cur.execute("INSERT INTO products (name, price) VALUES (?, ?)", ('Läsk', 15))
+cur.execute("INSERT INTO products (name, price, quantity) VALUES (?, ?, ?)", ('Läsk', 15, 50))
 cur.execute("INSERT INTO products (name, price) VALUES (?, ?)", ('Nocco', 25))
 cur.execute("INSERT INTO orders (customer_name, customer_id) VALUES (?, ?)", ('Adam Erlandsson', 1))
 cur.execute('''

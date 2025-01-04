@@ -4,7 +4,7 @@
   <Dialog
     v-model:visible="showModal"
     modal
-    header="Visa produkter"
+    header="Produkter i denna beställning"
     :style="{ width: '600px', height: '500px' }"
   >
     <DataTable :value="order.products">

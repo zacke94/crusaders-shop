@@ -7,7 +7,7 @@
       <div class="mt-16 buttons-grid">
         <Button label="Hantera användare" @click="onClickManageUsers"></Button>
         <Button label="Hantera produkter" @click="onClickManageProducts"></Button>
-        <Button label="Visa ordrar" @click="onClickShowOrders"></Button>
+        <Button label="Hantera ordrar" @click="onClickManageOrders"></Button>
         <OpenFridgeModal />
       </div>
     </div>
@@ -52,8 +52,8 @@ export default {
     async onClickManageProducts() {
       await router.push({ path: '/admin/manage-products' });
     },
-    async onClickShowOrders() {
-      await router.push({ path: '/admin/show-orders' });
+    async onClickManageOrders() {
+      await router.push({ path: '/admin/manage-orders' });
     },
     async onClickGoHome() {
       await router.push({ path: '/' });
