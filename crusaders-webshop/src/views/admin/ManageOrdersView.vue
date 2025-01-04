@@ -32,8 +32,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { Order } from '@/models/Order';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -42,6 +40,8 @@ import Toast from 'primevue/toast';
 import store from '@/store';
 import router from '@/router';
 import ConfirmDialog from 'primevue/confirmdialog';
+import OrderService from '@/services/order-service';
+import ToastService from '@/services/toast-service';
 
 export default {
   name: 'ManageOrdersView',
@@ -90,39 +90,20 @@ export default {
         },
         accept: async () => {
           try {
-            await axios.delete(`http://127.0.0.1:5000/delete-order/${orderId}`);
-            this.$toast.add({
-              severity: 'success',
-              summary: 'Lyckades radera order',
-              life: 6000
-            });
+            await OrderService.deleteOrder(orderId);
+            ToastService.showSuccess(this.$toast, 'Lyckades radera order');
             await this.getOrders();
           } catch {
-            this.$toast.add({
-              severity: 'error',
-              summary: 'Något gick fel',
-              detail: 'Skrik på Adam',
-              life: 6000
-            });
+            ToastService.showError(this.$toast);
           }
         }
       });
     },
     async getOrders() {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/get-orders');
-        if (response.data.length > 0) {
-          this.orders = response.data.map((order) => new Order(order));
-        } else {
-          this.orders = [];
-        }
-      } catch (e) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Något gick fel',
-          detail: 'Skrik på Adam',
-          life: 6000
-        });
+        this.orders = await OrderService.getOrders();
+      } catch {
+        ToastService.showError(this.$toast);
       }
     }
   },

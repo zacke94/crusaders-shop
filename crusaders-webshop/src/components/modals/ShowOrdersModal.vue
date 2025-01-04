@@ -15,6 +15,7 @@
       scrollHeight="400px"
       :pt="{ thead: { style: { 'background-color': 'red' } } }"
     >
+      <template #empty v-if="emptyOrdersList"> Inga ordrar hittades. </template>
       <Column expander style="width: 5rem" />
       <Column field="orderId" header="Order id"></Column>
       <Column field="orderDate" header="Order datum"></Column>
@@ -76,6 +77,11 @@ export default {
   methods: {
     onClickShowOrders() {
       this.showModal = true;
+    }
+  },
+  computed: {
+    emptyOrdersList() {
+      return this.orders.length === 0;
     }
   }
 };

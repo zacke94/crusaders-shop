@@ -35,6 +35,14 @@ const OrderService = {
   async addOrder(order) {
     const response = await axios.post(`${API_BASE_URL}/add-order`, order);
     return response.data.orderId;
+  },
+
+  /**
+   * @param {number} orderId
+   * @returns {Promise<void>}
+   */
+  async deleteOrder(orderId) {
+    await axios.delete(`${API_BASE_URL}/delete-order/${orderId}`);
   }
 };
 
