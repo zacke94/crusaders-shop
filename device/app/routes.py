@@ -178,11 +178,51 @@ def get_orders():
     total_price = 0
     
     try:
-        for order in get_orders_from_db():
-            order_id = order[0]
-            order_products = get_order_products_from_db(order_id)
+        orders_from_db = get_orders_from_db()
 
-            if order_products is not None:
+        if orders_from_db is not None:
+            for order in orders_from_db:
+                order_id = order[0]
+                order_products = get_order_products_from_db(order_id)
+
+                if order_products is not None:
+                    adjusted_column_names = [{
+                        'productId': order_product[1],
+                        'productName': order_product[2],
+                        'quantity': order_product[3],
+                        'totalPrice': order_product[4]
+                        } for order_product in order_products
+                    ]
+                    total_price_for_order = [t['totalPrice'] for t in adjusted_column_names]
+                    
+                    order_dict = {
+                        'orderId': order_id,
+                        'customerName': order[1],
+                        'customerId': order[2],
+                        'orderDate': order[3],
+                        'totalPrice': sum(total_price_for_order),
+                        'products': adjusted_column_names
+                    }
+                    orders.append(order_dict)
+
+        return jsonify(orders), 200
+    except Exception as e:
+        logger_instance.error(f"Error in '/get-orders': {e}")
+        return "Something went wrong", 500
+ 
+@current_app.route('/get-order/<user_id>', methods=['GET'])
+def get_orders_from_user(user_id):
+    orders = []
+    total_price = 0
+
+    try:
+        user_orders = get_orders_from_user_from_db(user_id)
+
+        if user_orders is not None:
+            for order in get_orders_from_user_from_db(user_id):
+                order_id = order[0]
+                order_products = get_order_products_from_db(order_id)
+
                 adjusted_column_names = [{
                     'productId': order_product[1],
                     'productName': order_product[2],
@@ -201,40 +241,6 @@ def get_orders():
                     'products': adjusted_column_names
                 }
                 orders.append(order_dict)
-
-        return jsonify(orders), 200
-    except Exception as e:
-        logger_instance.error(f"Error in '/get-orders': {e}")
-        return "Something went wrong", 500
- 
-@current_app.route('/get-order/<user_id>', methods=['GET'])
-def get_orders_from_user(user_id):
-    orders = []
-    total_price = 0
-
-    try:
-        for order in get_orders_from_user_from_db(user_id):
-            order_id = order[0]
-            order_products = get_order_products_from_db(order_id)
-
-            adjusted_column_names = [{
-                'productId': order_product[1],
-                'productName': order_product[2],
-                'quantity': order_product[3],
-                'totalPrice': order_product[4]
-                } for order_product in order_products
-            ]
-            total_price_for_order = [t['totalPrice'] for t in adjusted_column_names]
-            
-            order_dict = {
-                'orderId': order_id,
-                'customerName': order[1],
-                'customerId': order[2],
-                'orderDate': order[3],
-                'totalPrice': sum(total_price_for_order),
-                'products': adjusted_column_names
-            }
-            orders.append(order_dict)
 
         return jsonify(orders), 200
         
