@@ -200,7 +200,7 @@ export default {
     });
 
     try {
-      this.user = UserService.getUser(parseInt(this.userId));
+      this.user = await UserService.getUser(parseInt(this.userId));
       this.products = await ProductService.getEligibleProducts();
     } catch {
       ToastService.showError(this.$toast);

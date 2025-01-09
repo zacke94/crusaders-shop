@@ -76,7 +76,6 @@ export default {
             ToastService.showError(this.$toast);
           }
         }
-        this.pinCode = '';
       } else if (this.pinCode && this.pinCode.length > 0) {
         this.showError = false;
       }

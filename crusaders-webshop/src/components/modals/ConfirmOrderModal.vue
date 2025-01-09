@@ -2,7 +2,13 @@
   <Toast />
   <Button label="Köp" @click="onClickBuy" :disabled="order.totalPrice === 0"></Button>
 
-  <Dialog :visible="showModal" modal :header="headerMessage" :style="{ 'min-width': '400px' }">
+  <Dialog
+    :visible="showModal"
+    modal
+    :header="headerMessage"
+    :style="{ 'min-width': '400px' }"
+    :closable="!openingFridgeState"
+  >
     <div v-if="!openingFridgeState">
       <DataTable
         :value="order.products"

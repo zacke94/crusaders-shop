@@ -11,7 +11,7 @@
     <AddProductModal @update-products="handleUpdateProducts" />
     <ConfirmPopup></ConfirmPopup>
 
-    <DataTable v-if="!emptyProductsList" scrollable :value="products" tableClass="mt-16">
+    <DataTable v-if="!emptyProductsList" :value="products" tableClass="mt-16">
       <Column field="name" header="Namn"></Column>
       <Column field="price" header="Pris"></Column>
       <Column field="quantity" header="Saldo"></Column>
