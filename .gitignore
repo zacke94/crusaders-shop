@@ -138,3 +138,5 @@ device/venv
 .idea/
 
 recordings/
+
+users.json

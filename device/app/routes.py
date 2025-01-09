@@ -75,7 +75,7 @@ def login():
     try:
         request_data = request.json
 
-        if get_user_pin_code(request_data['id']) == int(request_data['pinCode']):
+        if get_user_pin_code(request_data['id']) == request_data['pinCode']:
             return "Success", 200
         else:
             return "Unauthorized", 401
@@ -226,9 +226,8 @@ def get_orders_from_user(user_id):
 
     try:
         user_orders = get_orders_from_user_from_db(user_id)
-
         if user_orders is not None:
-            for order in get_orders_from_user_from_db(user_id):
+            for order in user_orders:
                 order_id = order[0]
                 order_products = get_order_products_from_db(order_id)
 

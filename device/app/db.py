@@ -13,7 +13,7 @@ def get_active_users_from_db():
 def get_all_users_from_db():
     connection = sqlite3.connect('crusaders-shop.db')
     cursor = connection.cursor()
-    cursor.execute('SELECT id, name, is_active FROM users')
+    cursor.execute('SELECT id, name, is_active FROM users ORDER BY name ASC')
     users = cursor.fetchall()
     cursor.close()
     connection.close()
@@ -105,7 +105,7 @@ def get_admin_pin_code(pin_code):
 def get_eligible_products_from_db():
     connection = sqlite3.connect('crusaders-shop.db')
     cursor = connection.cursor()
-    cursor.execute('SELECT id, name, price, quantity FROM products WHERE show_product = 1')
+    cursor.execute('SELECT id, name, price, quantity FROM products WHERE show_product = 1 ORDER BY name ASC')
     products = cursor.fetchall()
     cursor.close()
     connection.close()
@@ -212,7 +212,7 @@ def add_order_to_db(id, products, total_price):
     num_of_inserts = 0
 
     for product in products:
-        edit_product_quanity = _edit_product_quanity(product['id'], product['quantity'])
+        edit_product_quanity = _edit_product_quanity(connection, product['id'], product['quantity'])
         if edit_product_quanity == 0:
             raise Exception(f"Failed to update quantity of product with id {product['id']}")
 
@@ -326,13 +326,10 @@ def _get_product_quantity(product_id):
 
     return result[0] if result else None
 
-def _edit_product_quanity(product_id, quantity):
-    connection = sqlite3.connect('crusaders-shop.db')
+def _edit_product_quanity(connection, product_id, quantity):
     cursor = connection.cursor()
     cursor.execute(f'UPDATE products SET quantity = quantity - {quantity} WHERE id = {product_id}')
     connection.commit()
-    cursor.close()
-    connection.close()
 
     if cursor.rowcount > 0:
         logger_instance.info(f"Quantity of product with ID {product_id} updated successfully.")
