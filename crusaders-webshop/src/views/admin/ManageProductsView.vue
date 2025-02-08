@@ -12,9 +12,30 @@
     <ConfirmPopup></ConfirmPopup>
 
     <DataTable v-if="!emptyProductsList" :value="products" tableClass="mt-16">
-      <Column field="name" header="Namn"></Column>
-      <Column field="price" header="Pris"></Column>
-      <Column field="quantity" header="Saldo"></Column>
+      <Column field="name" header="Namn">
+        <template #body="slotProps">
+          <div class="buttons-grid">
+            <p>{{ slotProps.data.name }} kr</p>
+            <Button icon="pi pi-pencil" size="small" severity="secondary"></Button>
+          </div>
+        </template>
+      </Column>
+      <Column field="price" header="Pris">
+        <template #body="slotProps">
+          <div class="buttons-grid">
+            <p>{{ slotProps.data.price }} kr</p>
+            <Button icon="pi pi-pencil" size="small" severity="secondary"></Button>
+          </div>
+        </template>
+      </Column>
+      <Column field="quantity" header="Saldo">
+        <template #body="slotProps">
+          <div class="buttons-grid">
+            <p>{{ slotProps.data.quantity }}</p>
+            <Button icon="pi pi-pencil" size="small" severity="secondary"></Button>
+          </div>
+        </template>
+      </Column>
       <Column header="Dold">
         <template #body="slotProps">
           <p>{{ showProduct(slotProps.data.showProduct) }}</p>
@@ -22,21 +43,19 @@
       </Column>
       <Column>
         <template #body="slotProps">
-          <div class="buttons-grid">
-            <EditProductModal :product="slotProps.data" @update-products="handleUpdateProducts" />
-            <Button
-              v-if="slotProps.data.showProduct"
-              label="Dölj"
-              severity="danger"
-              @click="onClickHideProduct($event, slotProps.data)"
-            ></Button>
-            <Button
-              v-else
-              label="Visa"
-              severity="success"
-              @click="onClickShowProduct($event, slotProps.data)"
-            ></Button>
-          </div>
+          <!--            <EditProductModal :product="slotProps.data" @update-products="handleUpdateProducts" />-->
+          <Button
+            v-if="slotProps.data.showProduct"
+            label="Dölj"
+            severity="danger"
+            @click="onClickHideProduct($event, slotProps.data)"
+          ></Button>
+          <Button
+            v-else
+            label="Visa"
+            severity="success"
+            @click="onClickShowProduct($event, slotProps.data)"
+          ></Button>
         </template>
       </Column>
     </DataTable>

@@ -9,4 +9,3 @@ sleep 5
 /home/adamerlandsson/crusaders-shop/scripts/launch_backend_pi.sh
 sleep 5
 /usr/bin/chromium-browser --kiosk 2> /dev/null http://127.0.0.1:5173
-# continue here
