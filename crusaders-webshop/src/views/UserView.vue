@@ -120,7 +120,12 @@ export default {
   methods: {
     decreaseAmount(product) {
       if (this.hasProductInOrder(product.id)) {
-        this.orderProducts.find((p) => p.id === product.id).quantity--;
+        const orderProduct = this.orderProducts.find((p) => p.id === product.id);
+        if (orderProduct.quantity > 1) {
+          this.orderProducts.find((p) => p.id === product.id).quantity--;
+        } else {
+          this.orderProducts = this.orderProducts.filter((p) => p.id !== product.id);
+        }
         this.changeAmount();
       }
     },
