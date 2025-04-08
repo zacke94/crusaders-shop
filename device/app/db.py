@@ -4,7 +4,7 @@ from .logger import logger_instance
 def get_active_users_from_db():
     connection = sqlite3.connect('crusaders-shop.db')
     cursor = connection.cursor()
-    cursor.execute('SELECT id, name FROM users WHERE is_active = 1')
+    cursor.execute('SELECT id, name FROM users WHERE is_active = 1 ORDER BY name ASC')
     users = cursor.fetchall()
     cursor.close()
     connection.close()
