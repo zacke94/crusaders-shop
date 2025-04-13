@@ -1,13 +1,11 @@
 <template>
-  <Toast />
-  <Button label="Ändra" severity="secondary" @click="onClickEditProduct"></Button>
-
-  <Dialog
-    v-model:visible="showModal"
-    modal
-    :header="this.product.name"
-    :style="{ width: '400px', height: '500px' }"
-  >
+  <Button
+    icon="pi pi-pencil"
+    size="small"
+    severity="secondary"
+    @click="onClickEditProduct"
+  ></Button>
+  <Dialog v-model:visible="showModal" modal :header="product.name">
     <div>
       <label for="name">Nytt namn</label>
       <InputText v-model="updatedProduct.name" type="text" inputId="name" maxlength="20" />
@@ -16,20 +14,22 @@
       <label for="price">Nytt pris</label>
       <InputNumber v-model="updatedProduct.price" inputId="price" maxlength="3" suffix=" kr" />
     </div>
-    <div>
-      <label for="quantity">Saldo</label>
-      <InputNumber v-model="updatedProduct.quantity" inputId="quantity" maxlength="2" />
+    <div class="quantity-wrapper">
+      <Button label="-" :disabled="disableDecreaseAmount" @click="decreaseAmount"></Button>
+      <p>{{ updatedProduct.quantity }}</p>
+      <Button label="+" @click="increaseAmount"></Button>
     </div>
-    <Button label="Spara" @click="onClickSave"></Button>
+
+    <Button label="Spara" class="mt-32" @click="onClickSave" />
   </Dialog>
 </template>
 
 <script>
-import { Product } from '@/models/Product';
 import Dialog from 'primevue/dialog';
-import InputText from 'primevue/inputtext';
+import { Product } from '@/models/Product';
 import Button from 'primevue/button';
-import Toast from 'primevue/toast';
+import cloneDeep from 'lodash/cloneDeep';
+import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import ProductService from '@/services/product-service';
 import ToastService from '@/services/toast-service';
@@ -38,25 +38,40 @@ export default {
   name: 'EditProductModal',
   components: {
     Dialog,
-    InputText,
-    InputNumber,
     Button,
-    Toast
+    InputText,
+    InputNumber
   },
-  emits: ['updateProducts'],
   props: {
     product: {
       type: Product,
       required: true
     }
   },
+  emits: ['updateProducts'],
   data() {
     return {
       showModal: false,
       updatedProduct: null
     };
   },
+  computed: {
+    disableDecreaseAmount() {
+      return this.updatedProduct.quantity === 0;
+    }
+  },
   methods: {
+    onClickEditProduct() {
+      this.showModal = true;
+    },
+    increaseAmount() {
+      this.updatedProduct.quantity++;
+    },
+    decreaseAmount() {
+      if (!this.disableDecreaseAmount) {
+        this.updatedProduct.quantity--;
+      }
+    },
     async onClickSave() {
       try {
         await ProductService.editProduct(this.updatedProduct);
@@ -66,13 +81,19 @@ export default {
       } catch {
         ToastService.showError(this.$toast);
       }
-    },
-    onClickEditProduct() {
-      this.showModal = true;
     }
   },
   mounted() {
-    this.updatedProduct = this.product;
+    this.updatedProduct = cloneDeep(this.product);
   }
 };
 </script>
+
+<style scoped>
+.quantity-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 16px;
+}
+</style>
