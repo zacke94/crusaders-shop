@@ -50,6 +50,8 @@
           Kylen låses automatiskt om
           <span class="progress-bar-seconds bold-text">{{ seconds }} sekunder...</span>
         </p>
+
+        <Button label="Avsluta nu" class="mt-16" @click="onClickFinishNow"></Button>
       </div>
     </div>
   </Dialog>
@@ -142,6 +144,9 @@ export default {
           }
         }, 1000);
       }
+    },
+    async onClickFinishNow() {
+      await this.closeFridge();
     },
     async closeFridge() {
       this.headerMessage = 'Kylen låses';

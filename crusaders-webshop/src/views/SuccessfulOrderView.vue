@@ -5,10 +5,9 @@
 
     <h2>Tänk på att att vi kameraövervakar, och märker om ni INTE betalar</h2>
 
-    <Button class="mt-32 center-div" label="Till startsidan" @click="onClickGoHome"></Button>
     <h3 class="mt-16">
       <span class="progress-bar-seconds"
-        >Eller bli automatiskt omdirigeras till startsidan om {{ seconds }} sekunder...</span
+        >Du blir automatiskt omdirigeras till startsidan om {{ seconds }} sekunder...</span
       >
     </h3>
   </div>
@@ -35,8 +34,7 @@ export default {
   },
   mounted() {
     let timerId;
-
-    /*if (this.seconds > 0) {
+    if (this.seconds > 0) {
       timerId = setInterval(() => {
         this.seconds--;
         if (this.seconds <= 0) {
@@ -44,15 +42,7 @@ export default {
           router.replace({ path: '/' });
         }
       }, 1000);
-    }*/
+    }
   }
 };
 </script>
-
-<style scoped>
-.center-div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>
