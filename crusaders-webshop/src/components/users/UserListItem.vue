@@ -1,7 +1,7 @@
 <template>
   <div>
     <Button :label="user.name" @click="onClickOpenModal" class="user-name-button" />
-    <Dialog v-model:visible="showModal" modal header="Logga in">
+    <Dialog v-model:visible="showModal" @hide="closeModal" modal header="Logga in">
       <div class="login-container">
         <div class="input-otp-container">
           <InputOtp v-model="pinCode" mask integerOnly />
@@ -57,7 +57,7 @@ export default {
   },
   watch: {
     async pinCode() {
-      if (this.pinCode.length === 4) {
+      if (this.pinCode && this.pinCode.length === 4) {
         const request = {
           id: this.user.id,
           pinCode: this.pinCode
@@ -87,6 +87,7 @@ export default {
     },
     closeModal() {
       this.showModal = false;
+      this.pinCode = null;
     },
     handlePinCodeInput(number) {
       if (!this.pinCode) {
